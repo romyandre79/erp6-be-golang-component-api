@@ -1,0 +1,60 @@
+{
+    "componentname": "API",
+    "componenttitle": "API Call",
+    "componentcategoryid": 5,
+    "version": "0.0.0",
+    "componentclass": "api",
+    "input": 1,
+    "output": 1,
+    "details": [
+        {
+            "detailtype": "text",
+            "lable": "URL",
+            "inputtype": "text",
+            "inputname": "url",
+            "inputdesc": "API endpoint URL",
+            "order": 1
+        },
+        {
+            "detailtype": "select",
+            "lable": "Method",
+            "inputtype": "select",
+            "inputname": "method",
+            "inputdesc": "HTTP method (GET, POST, PUT, DELETE, PATCH)",
+            "datasource": "GET,POST,PUT,DELETE,PATCH",
+            "order": 2
+        },
+        {
+            "detailtype": "textarea",
+            "lable": "Headers",
+            "inputtype": "textarea",
+            "inputname": "headers",
+            "inputdesc": "Custom headers (format: Key1:Value1,Key2:Value2)",
+            "order": 3
+        },
+        {
+            "detailtype": "textarea",
+            "lable": "Body",
+            "inputtype": "textarea",
+            "inputname": "body",
+            "inputdesc": "Request body (JSON or text)",
+            "order": 4
+        },
+        {
+            "detailtype": "text",
+            "lable": "Content Type",
+            "inputtype": "text",
+            "inputname": "contenttype",
+            "inputdesc": "Content-Type header (default: application/json)",
+            "order": 5
+        },
+        {
+            "detailtype": "number",
+            "lable": "Timeout",
+            "inputtype": "number",
+            "inputname": "timeout",
+            "inputdesc": "Request timeout in seconds (default: 30)",
+            "order": 6
+        }
+    ]
+}
