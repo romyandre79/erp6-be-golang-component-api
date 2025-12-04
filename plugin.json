@@ -2,8 +2,9 @@
     "componentname": "API",
     "componenttitle": "API Call",
     "componentcategoryid": 5,
-    "version": "0.0.0",
+    "version": "0.0.1",
     "componentclass": "api",
+    "createdby": "Prisma Data Abadi",
     "input": 1,
     "output": 1,
     "details": [

@@ -1,8 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
-echo Reading version from plugin.json...
-
+REM ===========================
+REM READ CURRENT VERSION
+REM ===========================
 for /f "tokens=2 delims=:," %%a in ('findstr /i "version" plugin.json') do (
     set raw=%%a
 )
@@ -20,54 +21,80 @@ for /f "tokens=1,2,3 delims=." %%a in ("%version%") do (
 
 set /a patch+=1
 set new_version=%major%.%minor%.%patch%
-
 echo New version: %new_version%
 
-echo Updating plugin.json...
-
+REM ===========================
+REM UPDATE plugin.json
+REM ===========================
 powershell -Command "(Get-Content plugin.json) -replace '\"version\": \"[0-9.]+\"', '\"version\": \"%new_version%\"' | Set-Content plugin.json"
 
-echo Cleaning old build files...
-if exist build (
-    rmdir /s /q build
-)
+REM ===========================
+REM CLEAN BUILD FOLDER
+REM ===========================
+echo Cleaning build folder...
+if exist build rmdir /s /q build
 mkdir build
 
-echo Building api Plugin for all OS...
-
+REM ===========================
+REM MULTI OS BUILD
+REM ===========================
 set TARGETS=windows/amd64 windows/arm64 linux/amd64 linux/arm64 darwin/amd64 darwin/arm64
+
+echo Building for all OS...
 
 for %%T in (%TARGETS%) do (
     for /f "tokens=1,2 delims=/" %%a in ("%%T") do (
         set GOOS=%%a
         set GOARCH=%%b
 
-        echo Building for %%a/%%b...
-
         if "%%a"=="windows" (
             go build -o build/api_%%a_%%b.exe main.go
         ) else (
             go build -o build/api_%%a_%%b main.go
         )
-
-        if !ERRORLEVEL! NEQ 0 (
-            echo Build FAILED for %%a/%%b
-            exit /b 1
-        )
     )
 )
 
-echo Creating plugin ZIP...
-
+REM ===========================
+REM CREATE ZIP
+REM ===========================
 set ZIPFILE=api_plugin_v%new_version%.zip
-
 powershell Compress-Archive -Path plugin.json,build\* -DestinationPath %ZIPFILE% -Force
 
-echo Deleting build folder...
+REM CLEAN BUILD
 rmdir /s /q build
 
+REM ===========================
+REM MOVE TO dist/
+REM ===========================
+if not exist ..\erp6-be-golang-component-free-dist\api mkdir ..\erp6-be-golang-component-free-dist\api
+move %ZIPFILE% ..\erp6-be-golang-component-free-dist\api\
+
+REM ===========================
+REM GENERATE CHECKSUM
+REM ===========================
+certutil -hashfile ..\erp6-be-golang-component-free-dist\api\%ZIPFILE% SHA256 > ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt
+
+REM REMOVE unnecessary lines from certutil output
+powershell -Command "(Get-Content ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt | Select-Object -Skip 1 | Select-Object -SkipLast 1) | Set-Content ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt"
+
+REM ===========================
+REM UPDATE CHANGELOG
+REM ===========================
+echo Writing CHANGELOG.md...
+
+set change="Auto build version %new_version%"
+
+(
+    echo ## v%new_version% - %date%
+    echo - %change%
+    echo.
+    type CHANGELOG.md 2>nul
+) > CHANGELOG.tmp
+
+move /y CHANGELOG.tmp CHANGELOG.md
+
 echo.
-echo Build complete: %ZIPFILE%
-echo Upload using:
-echo curl -X POST http://localhost:8888/api/plugins/upload -F "plugin=@%ZIPFILE%"
+echo Build complete → ..\erp6-be-golang-component-free-dist\api\%ZIPFILE%
+echo Checksum file → ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt
 echo.
