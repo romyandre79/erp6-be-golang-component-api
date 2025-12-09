@@ -1,9 +1,9 @@
 {
     "componentname": "API",
     "componenttitle": "API Call",
-    "componentcategoryid": 5,
+    "componentcategoryid": 7,
     "version": "0.0.1",
-    "componentclass": "api",
+    "componentclass": "fa-solid fa-plug",
     "createdby": "Prisma Data Abadi",
     "input": 1,
     "output": 1,

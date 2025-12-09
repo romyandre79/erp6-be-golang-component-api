@@ -67,16 +67,16 @@ rmdir /s /q build
 REM ===========================
 REM MOVE TO dist/
 REM ===========================
-if not exist ..\erp6-be-golang-component-free-dist\api mkdir ..\erp6-be-golang-component-free-dist\api
-move %ZIPFILE% ..\erp6-be-golang-component-free-dist\api\
+if not exist ..\erp6-be-golang-component-dist\api mkdir ..\erp6-be-golang-component-dist\api
+move %ZIPFILE% ..\erp6-be-golang-component-dist\api\
 
 REM ===========================
 REM GENERATE CHECKSUM
 REM ===========================
-certutil -hashfile ..\erp6-be-golang-component-free-dist\api\%ZIPFILE% SHA256 > ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt
+certutil -hashfile ..\erp6-be-golang-component-dist\api\%ZIPFILE% SHA256 > ..\erp6-be-golang-component-dist\api\checksums_v%new_version%.txt
 
 REM REMOVE unnecessary lines from certutil output
-powershell -Command "(Get-Content ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt | Select-Object -Skip 1 | Select-Object -SkipLast 1) | Set-Content ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt"
+powershell -Command "(Get-Content ..\erp6-be-golang-component-dist\api\checksums_v%new_version%.txt | Select-Object -Skip 1 | Select-Object -SkipLast 1) | Set-Content ..\erp6-be-golang-component-dist\api\checksums_v%new_version%.txt"
 
 REM ===========================
 REM UPDATE CHANGELOG
@@ -95,6 +95,6 @@ set change="Auto build version %new_version%"
 move /y CHANGELOG.tmp CHANGELOG.md
 
 echo.
-echo Build complete → ..\erp6-be-golang-component-free-dist\api\%ZIPFILE%
-echo Checksum file → ..\erp6-be-golang-component-free-dist\api\checksums_v%new_version%.txt
+echo Build complete → ..\erp6-be-golang-component-dist\api\%ZIPFILE%
+echo Checksum file → ..\erp6-be-golang-component-dist\api\checksums_v%new_version%.txt
 echo.
